@@ -5,223 +5,244 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Inventario</title>
     <link rel="shortcut icon" href="Pergamino.png" type="image/png" />
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
+      @font-face {
+        font-family: "JetBrainsMono-ExtraLight";
+        src: url("JetBrains Mono/JetBrainsMono-ExtraLight.ttf");
+      }
+
       :root {
         --fondo: #0a0a0c;
         --tarjeta-bg: #161618;
         --texto: #ffffff;
         --acento: #00d1ff;
         --borde: #2d2d30;
-        --peligro: #ff453a;
+        --peligro: #ffffff; /* Texto Blanco en modo oscuro */
         --exito: #30d158;
-        --aviso: #ff9f0a;
-        --transicion-suave: 0.4s ease-in-out;
+        --euro: #ffffff;
+        --bcv: #ffffff;
+        --naranja: #ffffff;
+        --rojo-prioridad: #ff453a;
+        --naranja-prioridad: #ff9f0a;
       }
+
       [data-tema="claro"] {
         --fondo: #ffffff;
-        --tarjeta-bg: #f4f4f7;
-        --texto: #1a1a1a;
+        --tarjeta-bg: #f2f2f7;
+        --texto: #000000;
         --acento: #0070f3;
-        --borde: #e1e1e6;
+        --euro: #000000;
+        --bcv: #000000;
+        --peligro: #000000; /* Texto Negro en modo claro */
+        --naranja: #000000;
+        --borde: #d1d1d6;
       }
+
       * {
         box-sizing: border-box;
+        font-family: "JetBrainsMono-ExtraLight", Arial;
         transition:
-          background-color var(--transicion-suave),
-          color var(--transicion-suave),
-          border var(--transicion-suave);
+          background-color 0.3s,
+          color 0.3s,
+          border-color 0.3s;
       }
       body {
         background-color: var(--fondo);
         color: var(--texto);
-        font-family: Inter, system-ui, sans-serif;
+        font-family: "JetBrainsMono-ExtraLight", Arial;
         margin: 0;
+        padding: 20px;
         display: flex;
         justify-content: center;
-        padding: 20px;
       }
       .contenedor {
         width: 100%;
-        max-width: 1000px;
+        max-width: 1400px;
       }
-      .encabezado {
+      header {
         display: flex;
         justify-content: space-between;
         align-items: center;
-        margin-bottom: 20px;
-        flex-wrap: wrap;
-        gap: 15px;
+        margin-bottom: 25px;
       }
+
+      .panel-tasas {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+      .tasa-card {
+        background: var(--tarjeta-bg);
+        border: 1px solid var(--borde);
+        padding: 15px;
+        border-radius: 12px;
+        text-align: center;
+      }
+      .tasa-label {
+        font-size: 0.65rem;
+        font-weight: 800;
+        color: var(--texto);
+        text-transform: uppercase;
+        display: block;
+        margin-bottom: 5px;
+      }
+      .tasa-monto {
+        font-size: 1.2rem;
+        font-weight: 900;
+      }
+
+      #in-precio::-webkit-outer-spin-button,
+      #in-precio::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      #in-precio {
+        appearance: textfield;
+        -moz-appearance: textfield;
+      }
+
       .grupo-entrada {
         background: var(--tarjeta-bg);
         padding: 20px;
-        border-radius: 15px;
+        border-radius: 16px;
         border: 1px solid var(--borde);
         display: flex;
         flex-wrap: wrap;
-        gap: 10px;
+        gap: 15px;
         margin-bottom: 30px;
+        align-items: center;
       }
       .grupo-entrada input,
       .grupo-entrada select {
-        flex: 1 1 200px;
+        flex: 1 1 180px;
         padding: 12px;
         border-radius: 8px;
         border: 1px solid var(--borde);
         background: var(--fondo);
         color: var(--texto);
-        outline: 0;
+        outline: none;
       }
-      .btn-agregar {
-        flex: 1 1 100%;
-        background: var(--acento);
-        color: #fff;
-        border: none;
-        padding: 12px 25px;
+
+      .btn {
+        padding: 10px 18px;
         border-radius: 8px;
-        cursor: pointer;
         font-weight: 700;
+        cursor: pointer;
+        border: 1px solid var(--borde);
+        background: var(--tarjeta-bg);
+        color: var(--texto);
+        text-transform: uppercase;
+        font-size: 0.7rem;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
       }
-      @media (min-width: 768px) {
-        .btn-agregar {
-          flex: 0 0 auto;
-        }
+      .btn:hover {
+        background: var(--texto);
+        color: var(--fondo);
       }
+      .btn-add {
+        background: var(--fondo) !important;
+        color: var(--texto) !important;
+        border-color: var(--texto) !important;
+      }
+
       .tarjeta-tabla {
         background: var(--tarjeta-bg);
-        border-radius: 15px;
+        border-radius: 12px;
         border: 1px solid var(--borde);
-        overflow: hidden;
+        overflow-x: auto;
       }
       table {
         width: 100%;
         border-collapse: collapse;
+        min-width: 900px;
       }
       th {
         background: var(--borde);
         padding: 15px;
         text-align: left;
-        font-size: 0.75rem;
+        font-size: 15px;
         text-transform: uppercase;
+        color: var(--texto);
       }
       td {
         padding: 15px;
         border-bottom: 1px solid var(--borde);
+        font-size: 0.95rem;
+        color: var(--texto);
       }
-      @media (max-width: 700px) {
-        table,
-        tbody,
-        td,
-        th,
-        thead,
-        tr {
-          display: block;
-        }
-        thead tr {
-          position: absolute;
-          top: -9999px;
-          left: -9999px;
-        }
-        tr {
-          border-bottom: 2px solid var(--borde);
-          padding: 10px 0;
-        }
-        td {
-          border: none;
-          position: relative;
-          padding-left: 45% !important;
-          text-align: right !important;
-          min-height: 40px;
-        }
-        td:before {
-          content: attr(data-label);
-          position: absolute;
-          left: 15px;
-          width: 40%;
-          text-align: left;
-          font-weight: 700;
-          font-size: 0.7rem;
-          color: var(--acento);
-          text-transform: uppercase;
-        }
-        .handle {
-          display: none;
-        }
-        td[data-label="Acción"] {
-          text-align: end !important;
-          padding-left: 15px !important;
-        }
-        .flex-btns {
-          justify-content: center;
-          margin-top: 10px;
-        }
-      }
-      .handle {
+      .drag-handle {
         cursor: grab;
-        text-align: center;
-        color: var(--acento);
-        opacity: 0.6;
-        width: 40px;
+        opacity: 0.3;
+        padding-right: 10px;
       }
-      .flex-btns {
-        display: flex;
-        justify-content: flex-end;
-        gap: 4rem;
-        flex-wrap: wrap;
-      }
-      .btn-accion {
-        padding: 8px 12px;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        background: 0 0;
-        cursor: pointer;
-        border: 1px solid var(--peligro);
-        color: var(--peligro);
-        font-weight: 500;
-      }
-      .btn-borrar:hover {
-        background: var(--peligro);
-        color: #fff;
-      }
-      .btn-restaurar-orig {
-        border-color: var(--exito);
-        color: var(--exito);
-      }
-      .btn-restaurar-orig:hover {
-        background: var(--exito);
-        color: #fff;
-      }
-      .btn-restaurar-fin {
-        border-color: var(--acento);
-        color: var(--acento);
-      }
-      .btn-restaurar-fin:hover {
-        background: var(--acento);
-        color: #fff;
-      }
+
       .etiqueta {
-        padding: 4px 10px;
+        padding: 5px 12px;
         border-radius: 6px;
+        font-size: 0.65rem;
+        font-weight: 900;
+        text-transform: uppercase;
+        display: inline-block;
+        /* El fondo será Blanco en Dark Mode y Negro en Light Mode */
+        background-color: var(--texto);
+        /* La letra será Negra en Dark Mode y Blanca en Light Mode */
+        color: var(--fondo);
+        border: none;
+        letter-spacing: 0.5px;
+      }
+      /*  .Alta {
+      }
+
+      .Media {
+      }
+
+      .Baja {
+      }
+*/
+      .totales-container {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+        margin-top: 30px;
+      }
+      .total-card-v2 {
+        background: var(--tarjeta-bg);
+        border: 1px solid var(--borde);
+        border-radius: 12px;
+        padding: 20px;
+        border-left: 5px solid var(--borde);
+      }
+      .total-header {
         font-size: 0.7rem;
         font-weight: 800;
+        text-transform: uppercase;
+        color: var(--texto);
+        margin-bottom: 10px;
       }
-      .Alta {
-        background: rgba(255, 69, 58, 0.2);
-        color: #ff453a;
+      .total-row {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
       }
-      .Media {
-        background: rgba(255, 159, 10, 0.2);
-        color: #ff9f0a;
+      .val-principal {
+        font-size: 1.6rem;
+        font-weight: 900;
       }
-      .Baja {
-        background: rgba(48, 209, 88, 0.2);
-        color: #30d158;
+      .val-bolivares {
+        font-size: 0.95rem;
+        font-weight: 700;
       }
+
       .switch {
         position: relative;
         display: inline-block;
-        width: 46px;
-        height: 24px;
+        width: 40px;
+        height: 20px;
       }
       .switch input {
         opacity: 0;
@@ -235,221 +256,285 @@
         left: 0;
         right: 0;
         bottom: 0;
-        background-color: #444;
-        border-radius: 34px;
+        background-color: var(--borde);
+        border-radius: 20px;
       }
       .deslizador:before {
         position: absolute;
         content: "";
-        height: 18px;
-        width: 18px;
+        height: 14px;
+        width: 14px;
         left: 3px;
         bottom: 3px;
-        background-color: #fff;
+        background-color: var(--texto);
         border-radius: 50%;
         transition: 0.3s;
       }
       input:checked + .deslizador {
-        background-color: var(--acento);
+        background-color: #8827e2;
       }
       input:checked + .deslizador:before {
-        transform: translateX(22px);
+        transform: translateX(20px);
+        background-color: #000;
       }
     </style>
   </head>
   <body data-tema="oscuro">
     <section class="contenedor">
-      <header class="encabezado">
-        <h1>Inventario</h1>
-        <section style="display: flex; align-items: center; gap: 10px">
-          <span>Claro</span
-          ><label class="switch"
-            ><input type="checkbox" id="selectorTema" checked="checked" /><span
-              class="deslizador"
-            ></span></label
-          ><span>Oscuro</span>
-        </section>
+      <header>
+        <h1 style="margin: 0; letter-spacing: -1.5px; font-weight: 900">
+          Inventario
+        </h1>
+        <label class="switch"
+          ><input type="checkbox" id="selectorTema" checked /><span
+            class="deslizador"
+          ></span
+        ></label>
       </header>
+
+      <section class="panel-tasas">
+        <section class="tasa-card">
+          <span class="tasa-label">Dólar BCV</span
+          ><span id="t-db" class="tasa-monto" style="color: var(--bcv)"
+            >---</span
+          >
+        </section>
+        <section class="tasa-card">
+          <span class="tasa-label">Euro BCV</span
+          ><span id="t-eb" class="tasa-monto" style="color: var(--euro)"
+            >---</span
+          >
+        </section>
+        <section class="tasa-card">
+          <span class="tasa-label">Dólar Paralelo</span
+          ><span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
+            >---</span
+          >
+        </section>
+        <section class="tasa-card">
+          <span class="tasa-label">Euro Paralelo</span
+          ><span id="t-ep" class="tasa-monto" style="color: var(--naranja)"
+            >---</span
+          >
+        </section>
+      </section>
+
       <section class="grupo-entrada">
-        <input type="text" class="input-nombre" placeholder="Producto..." />
+        <input type="text" id="in-nombre" placeholder="Concepto / Producto" />
         <input
           type="number"
-          class="input-precio"
-          placeholder="Precio en Dólares $"
-          min="0"
-        /><select class="select-importancia">
+          id="in-precio"
+          placeholder="Precio USD"
+          step="0.01"
+        />
+        <select id="in-prioridad">
           <option value="Alta">Alta</option>
-          <option value="Media">Media</option>
-          <option value="Baja">Baja</option></select
-        ><button class="btn-agregar">Añadir</button>
+          <option value="Media" selected>Media</option>
+          <option value="Baja">Baja</option>
+        </select>
+        <button class="btn btn-add" onclick="agregar()">Añadir Item</button>
       </section>
-      <main class="tarjeta-tabla" id="tabla-principal"></main>
-      <footer
-        class="seccion-papelera"
-        style="
-          display: none;
-          margin-top: 50px;
-          border-top: 2px dashed var(--borde);
-          padding-top: 30px;
-        "
-      >
-        <h3 style="opacity: 0.5; margin-bottom: 20px">Papelera</h3>
-        <section class="tarjeta-tabla" id="tabla-papelera"></section>
+
+      <section class="tarjeta-tabla">
+        <table>
+          <thead>
+            <tr>
+              <th width="40"></th>
+              <th>Producto</th>
+              <th>USD ($)</th>
+              <th>Bs. (BCV)</th>
+              <th>Bs. (Para)</th>
+              <th>Prioridad</th>
+              <th style="text-align: right">Acción</th>
+            </tr>
+          </thead>
+          <tbody id="lista-inventario"></tbody>
+        </table>
+      </section>
+
+      <section class="totales-container" id="contenedor-totales"></section>
+
+      <footer id="seccion-papelera" style="display: none; margin-top: 50px">
+        <h3 style="font-size: 0.8rem; text-transform: uppercase">
+          Papelera de Reciclaje
+        </h3>
+        <section class="tarjeta-tabla">
+          <table>
+            <tbody id="lista-papelera"></tbody>
+          </table>
+        </section>
       </footer>
     </section>
+
     <script>
-      let inventario = JSON.parse(localStorage.getItem("inv_data"))
-        ?.inventario || [
-        {
-          nombre: "Cable Cat 6 o 6A [RJ45]",
-          precio: "10",
-          importancia: "Media",
-        },
-        { nombre: "Mesa", precio: "150", importancia: "Alta" },
-        { nombre: "Teclado y Mouse", precio: "60", importancia: "Media" },
-        { nombre: "Saco Cruzado Negro", precio: "200", importancia: "Media" },
-        { nombre: "Hoodie", precio: "45", importancia: "Baja" },
-        {
-          nombre: "Vans Negras [No Botines]",
-          precio: "80",
-          importancia: "Baja",
-        },
+      let tasas = { db: 0, eb: 0, dp: 0, ep: 0 };
+
+      // Datos iniciales solicitados
+      const datosIniciales = [
+        { nombre: "Cable Cat 6 o 6A [RJ45]", precio: "10", prioridad: "Media" },
+        { nombre: "Mesa", precio: "150", prioridad: "Alta" },
+        { nombre: "Teclado y Mouse", precio: "60", prioridad: "Media" },
+        { nombre: "Saco Cruzado Negro", precio: "200", prioridad: "Media" },
+        { nombre: "Hoodie", precio: "45", prioridad: "Baja" },
+        { nombre: "Vans Negras [No Botines]", precio: "80", prioridad: "Baja" },
       ];
-      let papelera =
-        JSON.parse(localStorage.getItem("inv_data"))?.papelera || [];
 
-      const guardar = () =>
-        localStorage.setItem(
-          "inv_data",
-          JSON.stringify({ inventario, papelera }),
-        );
+      let inventario = JSON.parse(localStorage.getItem("inv_v5"));
+      // Si el inventario está vacío, cargar los datos solicitados
+      if (!inventario || inventario.length === 0) {
+        inventario = datosIniciales;
+      }
 
-      const render = () => {
-        const principal = document.getElementById("tabla-principal");
-        const papeleraCont = document.getElementById("tabla-papelera");
+      let papelera = JSON.parse(localStorage.getItem("pap_v5")) || [];
 
-        if (inventario.length === 0) {
-          principal.innerHTML = `<p style="padding:20px; text-align:center; opacity:0.5;">Inventario vacío</p>`;
-        } else {
-          let html = `<table><thead><tr><th></th><th>Pos.</th><th>Producto</th><th>Precio</th><th>Prioridad</th><th style="text-align:end;">Acción</th><th></th></tr></thead><tbody>`;
-          inventario.forEach((item, i) => {
-            html += `
-              <tr draggable="false" data-index="${i}">
-                <td class="handle">☰</td>
-                <td data-label="Posición" style="color:var(--acento); font-weight:bold">${i + 1}°</td>
-                <td data-label="Producto" class="edit" data-field="nombre" contenteditable="true" data-index="${i}">${item.nombre}</td>
-                <td data-label="Precio">$<span class="edit" data-field="precio" contenteditable="true" data-index="${i}">${item.precio}</span> USD</td>
-                <td data-label="Prioridad"><span class="etiqueta ${item.importancia}">${item.importancia}</span></td>
-                <td data-label="Acción" style="text-align:end;"><button class="btn-accion btn-borrar" onclick="borrar(${i})">Borrar</button></td>
-                <td class="handle">⠿</td>
-              </tr>`;
-          });
-          principal.innerHTML = html + `</tbody></table>`;
-          vincularDrag();
-        }
-
-        const footer = document.querySelector(".seccion-papelera");
-        footer.style.display = papelera.length ? "block" : "none";
-
-        let phtml = `<table><tbody>`;
-        papelera.forEach((item, i) => {
-          phtml += `
-            <tr>
-              <td data-label="Objeto"><s>${item.objeto.nombre}</s> <small>(Original: ${item.pos + 1}°)</small></td>
-              <td data-label="Acción">
-                <div class="flex-btns">
-                  <button class="btn-accion btn-restaurar-orig" onclick="restaurar(${i}, 'original')">En su posición</button>
-                  <button class="btn-accion btn-restaurar-fin" onclick="restaurar(${i}, 'final')">Al final</button>
-                </div>
-              </td>
-            </tr>`;
-        });
-        papeleraCont.innerHTML = phtml + `</tbody></table>`;
-        guardar();
-      };
-
-      window.borrar = (i) => {
-        papelera.push({ objeto: inventario[i], pos: i });
-        inventario.splice(i, 1);
-        render();
-      };
-
-      window.restaurar = (i, modo) => {
-        const item = papelera[i];
-        if (modo === "original") {
-          inventario.splice(
-            Math.min(item.pos, inventario.length),
-            0,
-            item.objeto,
+      const lista = document.getElementById("lista-inventario");
+      Sortable.create(lista, {
+        animation: 150,
+        handle: ".drag-handle",
+        ghostClass: "sortable-ghost",
+        onEnd: () => {
+          inventario = Array.from(lista.querySelectorAll("tr")).map((r) =>
+            JSON.parse(r.dataset.info),
           );
-        } else {
-          inventario.push(item.objeto);
-        }
-        papelera.splice(i, 1);
-        render();
-      };
-
-      document.querySelector(".btn-agregar").addEventListener("click", () => {
-        const n = document.querySelector(".input-nombre"),
-          p = document.querySelector(".input-precio"),
-          i = document.querySelector(".select-importancia");
-        if (n.value.trim()) {
-          inventario.push({
-            nombre: n.value,
-            precio: p.value || "0",
-            importancia: i.value,
-          });
-          n.value = "";
-          p.value = "";
-          render();
-        }
+          guardar();
+        },
       });
 
-      document
-        .getElementById("tabla-principal")
-        .addEventListener("focusout", (e) => {
-          if (e.target.classList.contains("edit")) {
-            const idx = e.target.dataset.index;
-            const field = e.target.dataset.field;
-            inventario[idx][field] = e.target.innerText;
-            guardar();
-          }
+      async function fetchTasas() {
+        try {
+          const [rd, re] = await Promise.all([
+            fetch("https://ve.dolarapi.com/v1/dolares"),
+            fetch("https://ve.dolarapi.com/v1/euros"),
+          ]);
+          const dd = await rd.json(),
+            de = await re.json();
+          tasas.db = dd.find((x) => x.fuente === "oficial").promedio;
+          tasas.dp = dd.find((x) => x.fuente === "paralelo").promedio;
+          tasas.eb = de.find((x) => x.fuente === "oficial").promedio;
+          tasas.ep = de.find((x) => x.fuente === "paralelo").promedio;
+          render();
+        } catch (e) {
+          console.error("Error APIs");
+        }
+      }
+
+      const f = (n) =>
+        n.toLocaleString("es-VE", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
         });
 
-      document
-        .getElementById("selectorTema")
-        .addEventListener("change", (e) => {
-          document.body.setAttribute(
-            "data-tema",
-            e.target.checked ? "oscuro" : "claro",
-          );
+      function render() {
+        document.getElementById("t-db").innerText =
+          `Bs. ${tasas.db.toFixed(2)}`;
+        document.getElementById("t-eb").innerText =
+          `Bs. ${tasas.eb.toFixed(2)}`;
+        document.getElementById("t-dp").innerText =
+          `Bs. ${tasas.dp.toFixed(2)}`;
+        document.getElementById("t-ep").innerText =
+          `Bs. ${tasas.ep.toFixed(2)}`;
+
+        lista.innerHTML = "";
+        let sumaUSD = 0;
+
+        inventario.forEach((item, i) => {
+          const p = parseFloat(item.precio) || 0;
+          sumaUSD += p;
+          const tr = document.createElement("tr");
+          tr.dataset.info = JSON.stringify(item);
+          tr.innerHTML = `
+            <td><span class="drag-handle">⠿</span></td>
+            <td contenteditable="true" onblur="edit(${i},'nombre',this.innerText)">${item.nombre}</td>
+            <td style="font-weight:900">$<span contenteditable="true" onblur="edit(${i},'precio',this.innerText)">${item.precio}</span></td>
+            <td>${f(p * tasas.db)}</td>
+            <td>${f(p * tasas.dp)}</td>
+            <td><span class="etiqueta ${item.prioridad}">${item.prioridad}</span></td>
+            <td style="text-align:right"><button class="btn" style="padding:4px 8px" onclick="borrar(${i})">✕</button></td>
+          `;
+          lista.appendChild(tr);
         });
 
-      function vincularDrag() {
-        const filas = document.querySelectorAll("tr[data-index]");
-        filas.forEach((f) => {
-          const handles = f.querySelectorAll(".handle");
-          handles.forEach((h) => {
-            h.onmousedown = () => (f.draggable = true);
-          });
-          f.onmouseup = () => (f.draggable = false);
-          f.ondragstart = (e) => {
-            e.dataTransfer.setData("idx", f.dataset.index);
-            f.style.opacity = "0.4";
-          };
-          f.ondragover = (e) => e.preventDefault();
-          f.ondrop = (e) => {
-            const from = e.dataTransfer.getData("idx");
-            const to = f.dataset.index;
-            const item = inventario.splice(from, 1)[0];
-            inventario.splice(to, 0, item);
-            render();
-          };
-          f.ondragend = () => render();
+        const bsOfi = sumaUSD * tasas.db;
+        const bsPar = sumaUSD * tasas.dp;
+        document.getElementById("contenedor-totales").innerHTML = `
+          <section class="total-card-v2" style="border-left-color: var(--texto)">
+            <section class="total-header">Total Dólar BCV</section>
+            <section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span class="val-bolivares" style="color:var(--bcv)">Bs. ${f(bsOfi)}</span></section>
+          </section>
+          <section class="total-card-v2" style="border-left-color: var(--texto)">
+            <section class="total-header">Total Dólar Paralelo</section>
+            <section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span class="val-bolivares" style="color:var(--peligro)">Bs. ${f(bsPar)}</span></section>
+          </section>
+          <section class="total-card-v2" style="border-left-color: var(--texto)">
+            <section class="total-header">Total Euro BCV</section>
+            <section class="total-row"><span class="val-principal">€${f(bsOfi / tasas.eb)}</span><span class="val-bolivares" style="color:var(--euro)">Bs. ${f(bsOfi)}</span></section>
+          </section>
+          <section class="total-card-v2" style="border-left-color: var(--texto)">
+            <section class="total-header">Total Euro Paralelo</section>
+            <section class="total-row"><span class="val-principal">€${f(bsPar / tasas.ep)}</span><span class="val-bolivares" style="color:var(--naranja)">Bs. ${f(bsPar)}</span></section>
+          </section>
+        `;
+
+        const pCuerpo = document.getElementById("lista-papelera");
+        pCuerpo.innerHTML = "";
+        document.getElementById("seccion-papelera").style.display =
+          papelera.length ? "block" : "none";
+        papelera.forEach((p, i) => {
+          pCuerpo.innerHTML += `<tr>
+            <td><s>${p.item.nombre}</s></td>
+            <td style="text-align:right; display:flex; gap:10px; justify-content:flex-end">
+              <button class="btn" style="font-size:11px" onclick="restaurar(${i},'orig')">Original</button>
+              <button class="btn" style="font-size:11px" onclick="restaurar(${i},'fin')">Al Final</button>
+            </td>
+          </tr>`;
         });
       }
 
-      render();
+      function guardar() {
+        localStorage.setItem("inv_v5", JSON.stringify(inventario));
+        localStorage.setItem("pap_v5", JSON.stringify(papelera));
+        render();
+      }
+
+      window.agregar = () => {
+        const n = document.getElementById("in-nombre"),
+          p = document.getElementById("in-precio"),
+          pr = document.getElementById("in-prioridad");
+        if (n.value) {
+          inventario.push({
+            nombre: n.value,
+            precio: p.value || 0,
+            prioridad: pr.value,
+          });
+          n.value = "";
+          p.value = "";
+          guardar();
+        }
+      };
+      window.edit = (i, c, v) => {
+        inventario[i][c] = v;
+        guardar();
+      };
+      window.borrar = (i) => {
+        papelera.push({ item: inventario[i], pos: i });
+        inventario.splice(i, 1);
+        guardar();
+      };
+      window.restaurar = (i, m) => {
+        const p = papelera[i];
+        if (m === "orig")
+          inventario.splice(Math.min(p.pos, inventario.length), 0, p.item);
+        else inventario.push(p.item);
+        papelera.splice(i, 1);
+        guardar();
+      };
+      document.getElementById("selectorTema").onchange = (e) =>
+        document.body.setAttribute(
+          "data-tema",
+          e.target.checked ? "oscuro" : "claro",
+        );
+
+      fetchTasas();
     </script>
   </body>
 </html>
