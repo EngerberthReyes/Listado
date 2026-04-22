@@ -285,6 +285,20 @@
         <h1 style="margin: 0; letter-spacing: -1.5px; font-weight: 900">
           Inventario
         </h1>
+        <a
+          href="https://engerberthreyes.github.io/Listado"
+          style="
+            text-decoration: none;
+            color: var(--texto);
+            font-size: 0.7rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            padding-bottom: 2px;
+            margin-left: 20px;
+          "
+        >
+          Ir a Inventario Con Items →
+        </a>
         <label class="switch"
           ><input type="checkbox" id="selectorTema" checked /><span
             class="deslizador"
@@ -370,14 +384,7 @@
       let tasas = { db: 0, eb: 0, dp: 0, ep: 0 };
 
       // Datos iniciales solicitados
-      const datosIniciales = [
-        { nombre: "Cable Cat 6 o 6A [RJ45]", precio: "10", prioridad: "Media" },
-        { nombre: "Mesa", precio: "150", prioridad: "Alta" },
-        { nombre: "Teclado y Mouse", precio: "60", prioridad: "Media" },
-        { nombre: "Saco Cruzado Negro", precio: "200", prioridad: "Media" },
-        { nombre: "Hoodie", precio: "45", prioridad: "Baja" },
-        { nombre: "Vans Negras [No Botines]", precio: "80", prioridad: "Baja" },
-      ];
+      const datosIniciales = [];
 
       let inventario = JSON.parse(localStorage.getItem("inv_v5"));
       // Si el inventario está vacío, cargar los datos solicitados
