@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Inventario</title>
+    <link rel="shortcut icon" href="Pergamino.png" type="image/png" />
+    <style>
+      :root {
+        --fondo: #0a0a0c;
+        --tarjeta-bg: #161618;
+        --texto: #ffffff;
+        --acento: #00d1ff;
+        --borde: #2d2d30;
+        --peligro: #ff453a;
+        --exito: #30d158;
+        --aviso: #ff9f0a;
+        --transicion-suave: 0.4s ease-in-out;
+      }
+
+      [data-tema="claro"] {
+        --fondo: #ffffff;
+        --tarjeta-bg: #f4f4f7;
+        --texto: #1a1a1a;
+        --acento: #0070f3;
+        --borde: #e1e1e6;
+      }
+
+      * {
+        box-sizing: border-box;
+        transition:
+          background-color var(--transicion-suave),
+          color var(--transicion-suave);
+      }
+
+      body {
+        background-color: var(--fondo);
+        color: var(--texto);
+        font-family: "Inter", system-ui, sans-serif;
+        margin: 0;
+        display: flex;
+        justify-content: center;
+        padding: 20px;
+      }
+
+      .contenedor {
+        width: 100%;
+        max-width: 1000px;
+      }
+
+      .encabezado {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        flex-wrap: wrap;
+        gap: 15px;
+      }
+
+      .grupo-entrada {
+        background: var(--tarjeta-bg);
+        padding: 20px;
+        border-radius: 15px;
+        border: 1px solid var(--borde);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-bottom: 30px;
+      }
+
+      .grupo-entrada input,
+      .grupo-entrada select {
+        flex: 1 1 200px;
+        padding: 12px;
+        border-radius: 8px;
+        border: 1px solid var(--borde);
+        background: var(--fondo);
+        color: var(--texto);
+        outline: none;
+      }
+
+      .btn-agregar {
+        flex: 1 1 100%;
+        background: var(--acento);
+        color: white;
+        border: none;
+        padding: 12px 25px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: bold;
+      }
+
+      @media (min-width: 768px) {
+        .btn-agregar {
+          flex: 0 0 auto;
+        }
+      }
+
+      .tarjeta-tabla {
+        background: var(--tarjeta-bg);
+        border-radius: 15px;
+        border: 1px solid var(--borde);
+        overflow: hidden;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      th {
+        background: var(--borde);
+        padding: 15px;
+        text-align: left;
+        font-size: 0.75rem;
+        text-transform: uppercase;
+      }
+
+      td {
+        padding: 15px;
+        border-bottom: 1px solid var(--borde);
+      }
+
+      @media (max-width: 700px) {
+        table,
+        thead,
+        tbody,
+        th,
+        td,
+        tr {
+          display: block;
+        }
+        thead tr {
+          position: absolute;
+          top: -9999px;
+          left: -9999px;
+        }
+        tr {
+          border-bottom: 2px solid var(--borde);
+          padding: 10px 0;
+        }
+        td {
+          border: none;
+          position: relative;
+          padding-left: 45% !important;
+          text-align: right !important;
+          min-height: 40px;
+        }
+        td:before {
+          content: attr(data-label);
+          position: absolute;
+          left: 15px;
+          width: 40%;
+          text-align: left;
+          font-weight: bold;
+          font-size: 0.7rem;
+          color: var(--acento);
+          text-transform: uppercase;
+        }
+        .handle {
+          display: none;
+        }
+        td[data-label="Acción"] {
+          text-align: end !important;
+          padding-left: 15px !important;
+        }
+        .flex-btns {
+          justify-content: center;
+          margin-top: 10px;
+        }
+      }
+
+      .handle {
+        cursor: grab;
+        text-align: center;
+        color: var(--acento);
+        opacity: 0.6;
+        width: 40px;
+      }
+
+      .flex-btns {
+        display: flex;
+        justify-content: flex-end;
+        gap: 4rem;
+        flex-wrap: wrap;
+      }
+
+      .btn-accion {
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        background: none;
+        cursor: pointer;
+        border: 1px solid var(--peligro);
+        color: var(--peligro);
+        font-weight: 500;
+      }
+      .btn-borrar:hover {
+        background: var(--peligro);
+        color: white;
+      }
+
+      .btn-restaurar-orig {
+        border-color: var(--exito);
+        color: var(--exito);
+      }
+      .btn-restaurar-orig:hover {
+        background: var(--exito);
+        color: white;
+      }
+
+      .btn-restaurar-fin {
+        border-color: var(--acento);
+        color: var(--acento);
+      }
+      .btn-restaurar-fin:hover {
+        background: var(--acento);
+        color: white;
+      }
+
+      .etiqueta {
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-size: 0.7rem;
+        font-weight: 800;
+      }
+      .Alta {
+        background: rgba(255, 69, 58, 0.2);
+        color: #ff453a;
+      }
+      .Media {
+        background: rgba(255, 159, 10, 0.2);
+        color: #ff9f0a;
+      }
+      .Baja {
+        background: rgba(48, 209, 88, 0.2);
+        color: #30d158;
+      }
+
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 46px;
+        height: 24px;
+      }
+      .switch input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+      }
+      .deslizador {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background-color: #444;
+        border-radius: 34px;
+      }
+      .deslizador:before {
+        position: absolute;
+        content: "";
+        height: 18px;
+        width: 18px;
+        left: 3px;
+        bottom: 3px;
+        background-color: white;
+        border-radius: 50%;
+        transition: 0.3s;
+      }
+      input:checked + .deslizador {
+        background-color: var(--acento);
+      }
+      input:checked + .deslizador:before {
+        transform: translateX(22px);
+      }
+    </style>
+  </head>
+  <body data-tema="oscuro">
+    <section class="contenedor">
+      <header class="encabezado">
+        <h1>Inventario</h1>
+        <section style="display: flex; align-items: center; gap: 10px">
+          <span>Claro</span>
+          <label class="switch">
+            <input type="checkbox" id="selectorTema" checked />
+            <span class="deslizador"></span>
+          </label>
+          <span>Oscuro</span>
+        </section>
+      </header>
+
+      <section class="grupo-entrada">
+        <input type="text" class="input-nombre" placeholder="Producto..." />
+        <input
+          type="number"
+          class="input-precio"
+          placeholder="Precio $"
+          min="0"
+        />
+        <select class="select-importancia">
+          <option value="Alta">Alta</option>
+          <option value="Media">Media</option>
+          <option value="Baja">Baja</option>
+        </select>
+        <button class="btn-agregar">Añadir</button>
+      </section>
+
+      <main class="tarjeta-tabla" id="tabla-principal"></main>
+
+      <footer
+        class="seccion-papelera"
+        style="
+          display: none;
+          margin-top: 50px;
+          border-top: 2px dashed var(--borde);
+          padding-top: 30px;
+        "
+      >
+        <h3 style="opacity: 0.5; margin-bottom: 20px">Papelera</h3>
+        <section class="tarjeta-tabla" id="tabla-papelera"></section>
+      </footer>
+    </section>
+
+    <script>
+      let inventario = JSON.parse(localStorage.getItem("inv_data"))
+        ?.inventario || [
+        { nombre: "Cable", precio: "10", importancia: "Baja" },
+        { nombre: "Mesa", precio: "150", importancia: "Alta" },
+        {
+          nombre: "Teclado y Mouse",
+          precio: "60",
+          importancia: "Media",
+        },
+        {
+          nombre: "Saco cruzado negro",
+          precio: "200",
+          importancia: "Alta",
+        },
+        { nombre: "Hoddie", precio: "45", importancia: "Media" },
+        {
+          nombre: "Vans negras [No Botines]",
+          precio: "80",
+          importancia: "Media",
+        },
+      ];
+      let papelera =
+        JSON.parse(localStorage.getItem("inv_data"))?.papelera || [];
+
+      const guardar = () =>
+        localStorage.setItem(
+          "inv_data",
+          JSON.stringify({ inventario, papelera }),
+        );
+
+      const render = () => {
+        const principal = document.getElementById("tabla-principal");
+        const papeleraCont = document.getElementById("tabla-papelera");
+
+        if (inventario.length === 0) {
+          principal.innerHTML = `<p style="padding:20px; text-align:center; opacity:0.5;">Inventario vacío</p>`;
+        } else {
+          let html = `<table><thead><tr><th></th><th>Pos.</th><th>Producto</th><th>Precio</th><th>Prioridad</th><th style="text-align:end;">Acción</th><th></th></tr></thead><tbody>`;
+          inventario.forEach((item, i) => {
+            html += `
+              <tr draggable="false" data-index="${i}">
+                <td class="handle">☰</td>
+                <td data-label="Posición" style="color:var(--acento); font-weight:bold">${i + 1}°</td>
+                <td data-label="Producto" class="edit" data-field="nombre" contenteditable="true" data-index="${i}">${item.nombre}</td>
+                <td data-label="Precio">$<span class="edit" data-field="precio" contenteditable="true" data-index="${i}">${item.precio}</span> USD</td>
+                <td data-label="Prioridad"><span class="etiqueta ${item.importancia}">${item.importancia}</span></td>
+                <td data-label="Acción" style="text-align:end;"><button class="btn-accion btn-borrar" onclick="borrar(${i})">Borrar</button></td>
+                <td class="handle">⠿</td>
+              </tr>`;
+          });
+          principal.innerHTML = html + `</tbody></table>`;
+          vincularDrag();
+        }
+
+        const footer = document.querySelector(".seccion-papelera");
+        footer.style.display = papelera.length ? "block" : "none";
+
+        let phtml = `<table><tbody>`;
+        papelera.forEach((item, i) => {
+          phtml += `
+            <tr>
+              <td data-label="Objeto"><s>${item.objeto.nombre}</s> <small>(Original: ${item.pos + 1}°)</small></td>
+              <td data-label="Acción">
+                <div class="flex-btns">
+                  <button class="btn-accion btn-restaurar-orig" onclick="restaurar(${i}, 'original')">En su posición</button>
+                  <button class="btn-accion btn-restaurar-fin" onclick="restaurar(${i}, 'final')">Al final</button>
+                </div>
+              </td>
+            </tr>`;
+        });
+        papeleraCont.innerHTML = phtml + `</tbody></table>`;
+        guardar();
+      };
+
+      window.borrar = (i) => {
+        papelera.push({ objeto: inventario[i], pos: i });
+        inventario.splice(i, 1);
+        render();
+      };
+
+      window.restaurar = (i, modo) => {
+        const item = papelera[i];
+        if (modo === "original") {
+          inventario.splice(
+            Math.min(item.pos, inventario.length),
+            0,
+            item.objeto,
+          );
+        } else {
+          inventario.push(item.objeto);
+        }
+        papelera.splice(i, 1);
+        render();
+      };
+
+      document.querySelector(".btn-agregar").addEventListener("click", () => {
+        const n = document.querySelector(".input-nombre"),
+          p = document.querySelector(".input-precio"),
+          i = document.querySelector(".select-importancia");
+        if (n.value.trim()) {
+          inventario.push({
+            nombre: n.value,
+            precio: p.value || "0",
+            importancia: i.value,
+          });
+          n.value = "";
+          p.value = "";
+          render();
+        }
+      });
+
+      document
+        .getElementById("tabla-principal")
+        .addEventListener("focusout", (e) => {
+          if (e.target.classList.contains("edit")) {
+            const idx = e.target.dataset.index;
+            const field = e.target.dataset.field;
+            inventario[idx][field] = e.target.innerText;
+            guardar();
+          }
+        });
+
+      document
+        .getElementById("selectorTema")
+        .addEventListener("change", (e) => {
+          document.body.setAttribute(
+            "data-tema",
+            e.target.checked ? "oscuro" : "claro",
+          );
+        });
+
+      function vincularDrag() {
+        const filas = document.querySelectorAll("tr[data-index]");
+        filas.forEach((f) => {
+          const handles = f.querySelectorAll(".handle");
+          handles.forEach((h) => {
+            h.onmousedown = () => (f.draggable = true);
+          });
+          f.onmouseup = () => (f.draggable = false);
+          f.ondragstart = (e) => {
+            e.dataTransfer.setData("idx", f.dataset.index);
+            f.style.opacity = "0.4";
+          };
+          f.ondragover = (e) => e.preventDefault();
+          f.ondrop = (e) => {
+            const from = e.dataTransfer.getData("idx");
+            const to = f.dataset.index;
+            const item = inventario.splice(from, 1)[0];
+            inventario.splice(to, 0, item);
+            render();
+          };
+          f.ondragend = () => render();
+        });
+      }
+
+      render();
+    </script>
+  </body>
+</html>
