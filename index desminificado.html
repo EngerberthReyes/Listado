@@ -188,9 +188,7 @@
         font-weight: 900;
         text-transform: uppercase;
         display: inline-block;
-        /* El fondo será Blanco en Dark Mode y Negro en Light Mode */
         background-color: var(--texto);
-        /* La letra será Negra en Dark Mode y Blanca en Light Mode */
         color: var(--fondo);
         border: none;
         letter-spacing: 0.5px;
@@ -382,12 +380,24 @@
 
     <script>
       let tasas = { db: 0, eb: 0, dp: 0, ep: 0 };
-
-      // Datos iniciales solicitados
-      const datosIniciales = [];
+      const datosIniciales = [
+        {
+          nombre: "Cable Cat 6 o 6A [RJ45]",
+          precio: "10",
+          importancia: "Media",
+        },
+        { nombre: "Mesa", precio: "150", importancia: "Alta" },
+        { nombre: "Teclado y Mouse", precio: "60", importancia: "Media" },
+        { nombre: "Saco Cruzado Negro", precio: "200", importancia: "Media" },
+        { nombre: "Hoodie", precio: "45", importancia: "Baja" },
+        {
+          nombre: "Vans Negras [No Botines]",
+          precio: "80",
+          importancia: "Baja",
+        },
+      ];
 
       let inventario = JSON.parse(localStorage.getItem("inv_v5"));
-      // Si el inventario está vacío, cargar los datos solicitados
       if (!inventario || inventario.length === 0) {
         inventario = datosIniciales;
       }
