@@ -144,9 +144,7 @@
           color: var(--acento);
           text-transform: uppercase;
         }
-        .handle {
-          display: none;
-        }
+
         td[data-label="Acción"] {
           text-align: end !important;
           padding-left: 15px !important;
@@ -424,6 +422,83 @@
             e.target.checked ? "oscuro" : "claro",
           );
         });
+
+      let draggingIdx = null;
+      let startingY = 0;
+
+      function vincularDrag() {
+        const filas = document.querySelectorAll("tr[data-index]");
+
+        filas.forEach((f) => {
+          const handles = f.querySelectorAll(".handle");
+
+          // --- EVENTOS MOUSE (PC) ---
+          handles.forEach((h) => {
+            h.onmousedown = () => (f.draggable = true);
+          });
+          f.onmouseup = () => (f.draggable = false);
+          f.ondragstart = (e) => {
+            e.dataTransfer.setData("idx", f.dataset.index);
+            f.style.opacity = "0.4";
+          };
+          f.ondragover = (e) => e.preventDefault();
+          f.ondrop = (e) => {
+            const from = e.dataTransfer.getData("idx");
+            const to = f.dataset.index;
+            reordenar(from, to);
+          };
+
+          // --- EVENTOS TOUCH (MÓVIL) ---
+          handles.forEach((h) => {
+            h.addEventListener(
+              "touchstart",
+              (e) => {
+                draggingIdx = f.dataset.index;
+                f.style.background = "var(--borde)";
+                f.style.opacity = "0.8";
+                // Evita el scroll mientras arrastras el icono
+                if (e.cancelable) e.preventDefault();
+              },
+              { passive: false },
+            );
+          });
+
+          f.addEventListener(
+            "touchmove",
+            (e) => {
+              if (draggingIdx === null) return;
+              if (e.cancelable) e.preventDefault();
+
+              const touch = e.touches[0];
+              // Detectar sobre qué fila estamos pasando el dedo
+              const elementoBajoDedo = document.elementFromPoint(
+                touch.clientX,
+                touch.clientY,
+              );
+              const filaDestino = elementoBajoDedo?.closest("tr[data-index]");
+
+              if (filaDestino && filaDestino !== f) {
+                const to = filaDestino.dataset.index;
+                reordenar(draggingIdx, to);
+                draggingIdx = to; // Actualizamos el índice actual
+              }
+            },
+            { passive: false },
+          );
+
+          f.addEventListener("touchend", () => {
+            draggingIdx = null;
+            render();
+          });
+        });
+      }
+
+      // Función auxiliar para mover el objeto en el array
+      function reordenar(from, to) {
+        const item = inventario.splice(from, 1)[0];
+        inventario.splice(to, 0, item);
+        render();
+      }
 
       function vincularDrag() {
         const filas = document.querySelectorAll("tr[data-index]");
