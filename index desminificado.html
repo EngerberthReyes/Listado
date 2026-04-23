@@ -390,12 +390,16 @@
 
       // VARIABLES DE LOCALSTORAGE ACTUALIZADAS
       let inventario = JSON.parse(localStorage.getItem("sistema_inv_prod")) || [
-        { nombre: "Cable Cat 6 o 6A [RJ45]", precio: "10", prioridad: "Media" },
+        {
+          nombre: "Cable Cat 6 o 6A [RJ45]",
+          precio: "20",
+          prioridad: "Media-Alta",
+        },
         { nombre: "Mesa", precio: "150", prioridad: "Alta" },
-        { nombre: "Teclado y Mouse", precio: "60", prioridad: "Media" },
-        { nombre: "Saco Cruzado Negro", precio: "200", prioridad: "Media" },
-        { nombre: "Hoodie", precio: "45", prioridad: "Baja" },
-        { nombre: "Vans Negras [No Botines]", precio: "80", prioridad: "Baja" },
+        { nombre: "Teclado y Mouse", precio: "90", prioridad: "Media" },
+        { nombre: "Saco Cruzado Negro", precio: "120", prioridad: "Media" },
+        { nombre: "Hoodie [Negro]", precio: "25", prioridad: "Baja" },
+        { nombre: "Vans Negras [No Botines]", precio: "30", prioridad: "Baja" },
       ];
 
       let papelera = JSON.parse(localStorage.getItem("sistema_pap_prod")) || [];
