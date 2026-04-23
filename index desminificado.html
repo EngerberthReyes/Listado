@@ -96,7 +96,6 @@
         font-weight: 900;
       }
 
-      /* Inputs */
       .grupo-entrada {
         background: var(--tarjeta-bg);
         padding: 20px;
@@ -120,7 +119,6 @@
         outline: none;
       }
 
-      /* Botones */
       .btn {
         padding: 10px 18px;
         border-radius: 8px;
@@ -147,7 +145,6 @@
         border-color: var(--texto) !important;
       }
 
-      /* Tabla */
       .tarjeta-tabla {
         background: var(--tarjeta-bg);
         border-radius: 12px;
@@ -182,7 +179,6 @@
         opacity: 0.3;
       }
 
-      /* Estilo de Etiquetas y Selects en Tabla */
       .etiqueta {
         padding: 5px 10px;
         border-radius: 6px;
@@ -200,7 +196,6 @@
         min-width: 110px;
       }
 
-      /* Totales */
       .totales-container {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -228,7 +223,6 @@
         font-weight: 900;
       }
 
-      /* Switch Tema */
       .switch {
         position: relative;
         display: inline-block;
@@ -317,26 +311,26 @@
 
       <section class="panel-tasas">
         <div class="tasa-card">
-          <span class="tasa-label">Dólar BCV</span
-          ><span id="t-db" class="tasa-monto" style="color: var(--bcv)"
+          <span class="tasa-label">Dólar BCV</span>
+          <span id="t-db" class="tasa-monto" style="color: var(--bcv)"
             >---</span
           >
         </div>
         <div class="tasa-card">
-          <span class="tasa-label">Euro BCV</span
-          ><span id="t-eb" class="tasa-monto" style="color: var(--euro)"
+          <span class="tasa-label">Euro BCV</span>
+          <span id="t-eb" class="tasa-monto" style="color: var(--euro)"
             >---</span
           >
         </div>
         <div class="tasa-card">
-          <span class="tasa-label">Dólar Paralelo</span
-          ><span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
+          <span class="tasa-label">Dólar Paralelo</span>
+          <span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
             >---</span
           >
         </div>
         <div class="tasa-card">
-          <span class="tasa-label">Euro Paralelo</span
-          ><span id="t-ep" class="tasa-monto" style="color: var(--naranja)"
+          <span class="tasa-label">Euro Paralelo</span>
+          <span id="t-ep" class="tasa-monto" style="color: var(--naranja)"
             >---</span
           >
         </div>
@@ -394,24 +388,17 @@
     <script>
       let tasas = { db: 0, eb: 0, dp: 0, ep: 0 };
 
-      let inventario = JSON.parse(localStorage.getItem("inv_v5")) || [
-        {
-          nombre: "Cable Cat 6 o 6A [RJ45]",
-          precio: "10",
-          prioridad: "Media",
-        },
+      // VARIABLES DE LOCALSTORAGE ACTUALIZADAS
+      let inventario = JSON.parse(localStorage.getItem("sistema_inv_prod")) || [
+        { nombre: "Cable Cat 6 o 6A [RJ45]", precio: "10", prioridad: "Media" },
         { nombre: "Mesa", precio: "150", prioridad: "Alta" },
         { nombre: "Teclado y Mouse", precio: "60", prioridad: "Media" },
         { nombre: "Saco Cruzado Negro", precio: "200", prioridad: "Media" },
         { nombre: "Hoodie", precio: "45", prioridad: "Baja" },
-        {
-          nombre: "Vans Negras [No Botines]",
-          precio: "80",
-          prioridad: "Baja",
-        },
+        { nombre: "Vans Negras [No Botines]", precio: "80", prioridad: "Baja" },
       ];
 
-      let papelera = JSON.parse(localStorage.getItem("pap_v5")) || [];
+      let papelera = JSON.parse(localStorage.getItem("sistema_pap_prod")) || [];
 
       const lista = document.getElementById("lista-inventario");
 
@@ -421,7 +408,7 @@
         onEnd: () => {
           const nuevasFilas = Array.from(lista.querySelectorAll("tr"));
           inventario = nuevasFilas.map((tr) => JSON.parse(tr.dataset.info));
-          guardar(false); // No re-renderizar para no perder el foco si se está moviendo
+          guardar(false);
         },
       });
 
@@ -516,8 +503,8 @@
       }
 
       function guardar(refresh = true) {
-        localStorage.setItem("inv_v5", JSON.stringify(inventario));
-        localStorage.setItem("pap_v5", JSON.stringify(papelera));
+        localStorage.setItem("sistema_inv_prod", JSON.stringify(inventario));
+        localStorage.setItem("sistema_pap_prod", JSON.stringify(papelera));
         if (refresh) render();
       }
 
@@ -539,8 +526,6 @@
 
       window.edit = (i, c, v) => {
         inventario[i][c] = v.trim();
-        // Solo renderizamos si cambió la prioridad o el precio para actualizar totales,
-        // pero no si es el nombre (para no perder el cursor mientras escribes)
         guardar(c !== "nombre");
       };
 
