@@ -310,30 +310,30 @@
       </header>
 
       <section class="panel-tasas">
-        <div class="tasa-card">
+        <section class="tasa-card">
           <span class="tasa-label">Dólar BCV</span>
           <span id="t-db" class="tasa-monto" style="color: var(--bcv)"
             >---</span
           >
-        </div>
-        <div class="tasa-card">
+        </section>
+        <section class="tasa-card">
           <span class="tasa-label">Euro BCV</span>
           <span id="t-eb" class="tasa-monto" style="color: var(--euro)"
             >---</span
           >
-        </div>
-        <div class="tasa-card">
+        </section>
+        <section class="tasa-card">
           <span class="tasa-label">Dólar Paralelo</span>
           <span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
             >---</span
           >
-        </div>
-        <div class="tasa-card">
+        </section>
+        <section class="tasa-card">
           <span class="tasa-label">Euro Paralelo</span>
           <span id="t-ep" class="tasa-monto" style="color: var(--naranja)"
             >---</span
           >
-        </div>
+        </section>
       </section>
 
       <section class="grupo-entrada">
@@ -377,11 +377,11 @@
         <h3 style="font-size: 0.8rem; text-transform: uppercase">
           Papelera de Reciclaje
         </h3>
-        <div class="tarjeta-tabla">
+        <section class="tarjeta-tabla">
           <table>
             <tbody id="lista-papelera"></tbody>
           </table>
-        </div>
+        </section>
       </footer>
     </section>
 
@@ -486,10 +486,10 @@
         const bsOfi = sumaUSD * tasas.db;
         const bsPar = sumaUSD * tasas.dp;
         document.getElementById("contenedor-totales").innerHTML = `
-          <div class="total-card-v2"><div class="total-header">Total Dólar BCV</div><div class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--bcv)">Bs. ${f(bsOfi)}</span></div></div>
-          <div class="total-card-v2"><div class="total-header">Total Dólar Paralelo</div><div class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--peligro)">Bs. ${f(bsPar)}</span></div></div>
-          <div class="total-card-v2"><div class="total-header">Total Euro BCV</div><div class="total-row"><span class="val-principal">€${f(bsOfi / tasas.eb)}</span><span style="color:var(--euro)">Bs. ${f(bsOfi)}</span></div></div>
-          <div class="total-card-v2"><div class="total-header">Total Euro Paralelo</div><div class="total-row"><span class="val-principal">€${f(bsPar / tasas.ep)}</span><span style="color:var(--naranja)">Bs. ${f(bsPar)}</span></div></div>
+          <section class="total-card-v2"><section class="total-header">Total Dólar BCV</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--bcv)">Bs. ${f(bsOfi)}</span></section></section>
+          <section class="total-card-v2"><section class="total-header">Total Dólar Paralelo</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--peligro)">Bs. ${f(bsPar)}</span></section></section>
+          <section class="total-card-v2"><section class="total-header">Total Euro BCV</section><section class="total-row"><span class="val-principal">€${f(bsOfi / tasas.eb)}</span><span style="color:var(--euro)">Bs. ${f(bsOfi)}</span></section></section>
+          <section class="total-card-v2"><section class="total-header">Total Euro Paralelo</section><section class="total-row"><span class="val-principal">€${f(bsPar / tasas.ep)}</span><span style="color:var(--naranja)">Bs. ${f(bsPar)}</span></section></section>
         `;
       }
 
