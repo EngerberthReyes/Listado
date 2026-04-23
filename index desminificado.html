@@ -67,7 +67,6 @@
         margin-bottom: 25px;
       }
 
-      /* Panel de Tasas */
       .panel-tasas {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -396,8 +395,20 @@
       let tasas = { db: 0, eb: 0, dp: 0, ep: 0 };
 
       let inventario = JSON.parse(localStorage.getItem("inv_v5")) || [
+         {
+          nombre: "Cable Cat 6 o 6A [RJ45]",
+          precio: "10",
+          prioridad: "Media",
+        },
         { nombre: "Mesa", precio: "150", prioridad: "Alta" },
         { nombre: "Teclado y Mouse", precio: "60", prioridad: "Media" },
+        { nombre: "Saco Cruzado Negro", precio: "200", prioridad: "Media" },
+        { nombre: "Hoodie", precio: "45", prioridad: "Baja" },
+        {
+          nombre: "Vans Negras [No Botines]",
+          precio: "80",
+          prioridad: "Baja",
+        },
       ];
 
       let papelera = JSON.parse(localStorage.getItem("pap_v5")) || [];
