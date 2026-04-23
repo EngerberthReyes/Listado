@@ -276,6 +276,16 @@
         background-color: #000;
       }
 
+      .enlace-contenido {
+        text-decoration: none;
+        color: var(--texto);
+        font-size: 0.7rem;
+        font-weight: 800;
+        text-transform: uppercase;
+        padding-bottom: 2px;
+        margin-left: 20px;
+      }
+
       @media (max-width: 700px) {
         header {
           display: flex;
@@ -292,8 +302,8 @@
           width: 100%;
         }
 
-        a {
-          margin-left: 0 !important;
+        .enlace-contenido {
+          margin-left: 0;
         }
       }
     </style>
@@ -305,16 +315,8 @@
           Inventario
         </h1>
         <a
+          class="enlace-contenido"
           href="https://engerberthreyes.github.io/Listado"
-          style="
-            text-decoration: none;
-            color: var(--texto);
-            font-size: 0.7rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            padding-bottom: 2px;
-            margin-left: 20px;
-          "
         >
           Ir a Inventario Sin Items →
         </a>
