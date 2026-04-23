@@ -275,6 +275,27 @@
         transform: translateX(20px);
         background-color: #000;
       }
+
+      @media (max-width: 700px) {
+        header {
+          display: flex;
+          justify-content: center;
+          align-items: center;
+          flex-wrap: wrap;
+          margin-bottom: 25px;
+          flex-direction: column;
+          gap: 1rem;
+        }
+
+        .btn-add {
+          justify-content: center;
+          width: 100%;
+        }
+
+        a {
+          margin-left: 0 !important;
+        }
+      }
     </style>
   </head>
   <body data-tema="oscuro">
@@ -384,16 +405,16 @@
         {
           nombre: "Cable Cat 6 o 6A [RJ45]",
           precio: "10",
-          importancia: "Media",
+          prioridad: "Media",
         },
-        { nombre: "Mesa", precio: "150", importancia: "Alta" },
-        { nombre: "Teclado y Mouse", precio: "60", importancia: "Media" },
-        { nombre: "Saco Cruzado Negro", precio: "200", importancia: "Media" },
-        { nombre: "Hoodie", precio: "45", importancia: "Baja" },
+        { nombre: "Mesa", precio: "150", prioridad: "Alta" },
+        { nombre: "Teclado y Mouse", precio: "60", prioridad: "Media" },
+        { nombre: "Saco Cruzado Negro", precio: "200", prioridad: "Media" },
+        { nombre: "Hoodie", precio: "45", prioridad: "Baja" },
         {
           nombre: "Vans Negras [No Botines]",
           precio: "80",
-          importancia: "Baja",
+          prioridad: "Baja",
         },
       ];
 
