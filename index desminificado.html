@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Inventario</title>
     <link rel="shortcut icon" href="Pergamino.png" type="image/png" />
-    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
       @font-face {
         font-family: "JetBrainsMono-ExtraLight";
@@ -315,24 +314,53 @@
           <span id="t-db" class="tasa-monto" style="color: var(--bcv)"
             >---</span
           >
+          <section
+            id="f-db"
+            style="margin-top: 0.5rem"
+            class="tasa-label"
+          ></section>
         </section>
         <section class="tasa-card">
           <span class="tasa-label">Euro BCV</span>
-          <span id="t-eb" class="tasa-monto" style="color: var(--euro)"
+          <span
+            id="t-eb"
+            style="margin-top: 0.5rem"
+            class="tasa-monto"
+            style="color: var(--euro)"
             >---</span
           >
+          <section
+            id="f-eb"
+            style="margin-top: 0.5rem"
+            class="tasa-label"
+            class="tasa-label"
+          ></section>
         </section>
         <section class="tasa-card">
           <span class="tasa-label">Dólar Paralelo</span>
           <span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
             >---</span
           >
+          <section
+            id="f-dp"
+            style="margin-top: 0.5rem"
+            class="tasa-label"
+          ></section>
         </section>
         <section class="tasa-card">
           <span class="tasa-label">Euro Paralelo</span>
-          <span id="t-ep" class="tasa-monto" style="color: var(--naranja)"
+          <span
+            id="t-ep"
+            style="margin-top: 0.5rem"
+            class="tasa-monto"
+            style="color: var(--naranja)"
             >---</span
           >
+          <section
+            id="f-ep"
+            class="tasa-label"
+            style="margin-top: 0.5rem"
+          ></section>
         </section>
       </section>
 
@@ -345,6 +373,7 @@
           step="0.01"
         />
         <select id="in-prioridad">
+          <option value="Muy-Alta">Muy Alta</option>
           <option value="Alta">Alta</option>
           <option value="Media-Alta">Media-Alta</option>
           <option value="Media" selected>Media</option>
@@ -384,9 +413,24 @@
         </section>
       </footer>
     </section>
-
+    <script src="Sortable.min.js" type="text/javascript"></script>
     <script>
-      let tasas = { db: 0, eb: 0, dp: 0, ep: 0 };
+      let tasas = {
+        db: 0,
+        db_f: "",
+        eb: 0,
+        eb_f: "",
+        dp: 0,
+        dp_f: "",
+        ep: 0,
+        ep_f: "",
+      };
+
+      const f = (n) =>
+        (n || 0).toLocaleString("es-VE", {
+          minimumFractionDigits: 2,
+          maximumFractionDigits: 2,
+        });
 
       let inventario = JSON.parse(localStorage.getItem("sistema_inv_prod")) || [
         {
@@ -411,9 +455,17 @@
         animation: 150,
         handle: ".drag-handle",
         onEnd: () => {
-          const nuevasFilas = Array.from(lista.querySelectorAll("tr"));
-          inventario = nuevasFilas.map((tr) => JSON.parse(tr.dataset.info));
-          guardar(false);
+          const filas = Array.from(lista.querySelectorAll("tr"));
+          const nuevoInventario = filas.map((tr) => {
+            const celdas = tr.querySelectorAll("td");
+            return {
+              nombre: celdas[1].innerText,
+              precio: celdas[2].innerText.replace("$", ""),
+              prioridad: celdas[5].querySelector("select").value,
+            };
+          });
+          inventario = nuevoInventario;
+          guardar(true);
         },
       });
 
@@ -425,23 +477,33 @@
           ]);
           const dd = await rd.json(),
             de = await re.json();
-          tasas.db = dd.find((x) => x.fuente === "oficial").promedio;
-          tasas.dp = dd.find((x) => x.fuente === "paralelo").promedio;
-          tasas.eb = de.find((x) => x.fuente === "oficial").promedio;
-          tasas.ep = de.find((x) => x.fuente === "paralelo").promedio;
+
+          // Extraer datos y fechas
+          const oficialD = dd.find((x) => x.fuente === "oficial");
+          const paraD = dd.find((x) => x.fuente === "paralelo");
+          const oficialE = de.find((x) => x.fuente === "oficial");
+          const paraE = de.find((x) => x.fuente === "paralelo");
+
+          tasas.db = oficialD.promedio;
+          tasas.db_f = new Date(oficialD.fechaActualizacion).toLocaleString();
+
+          tasas.dp = paraD.promedio;
+          tasas.dp_f = new Date(paraD.fechaActualizacion).toLocaleString();
+
+          tasas.eb = oficialE.promedio;
+          tasas.eb_f = new Date(oficialE.fechaActualizacion).toLocaleString();
+
+          tasas.ep = paraE.promedio;
+          tasas.ep_f = new Date(paraE.fechaActualizacion).toLocaleString();
+
           render();
         } catch (e) {
           console.error("Error APIs");
         }
       }
 
-      const f = (n) =>
-        n.toLocaleString("es-VE", {
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-
       function render() {
+        // Renderizar montos
         document.getElementById("t-db").innerText =
           `Bs. ${tasas.db.toFixed(2)}`;
         document.getElementById("t-eb").innerText =
@@ -451,31 +513,42 @@
         document.getElementById("t-ep").innerText =
           `Bs. ${tasas.ep.toFixed(2)}`;
 
+        // Renderizar fechas
+        document.getElementById("f-db").innerText = tasas.db_f;
+        document.getElementById("f-eb").innerText = tasas.eb_f;
+        document.getElementById("f-dp").innerText = tasas.dp_f;
+        document.getElementById("f-ep").innerText = tasas.ep_f;
+
         lista.innerHTML = "";
         let sumaUSD = 0;
 
         inventario.forEach((item, i) => {
+          // 'i' empieza en 0
           const p = parseFloat(item.precio) || 0;
           sumaUSD += p;
           const tr = document.createElement("tr");
-          tr.dataset.info = JSON.stringify(item);
+
+          // IMPORTANTE: Guardamos el índice real (i)
           tr.innerHTML = `
-            <td><span class="drag-handle">⠿</span></td>
-            <td contenteditable="true" onblur="edit(${i},'nombre',this.innerText)">${item.nombre}</td>
-            <td style="font-weight:900">$<span contenteditable="true" onblur="edit(${i},'precio',this.innerText)">${item.precio}</span></td>
-            <td>${f(p * tasas.db)}</td>
-            <td>${f(p * tasas.dp)}</td>
-            <td>
-              <select class="etiqueta" onchange="edit(${i},'prioridad',this.value)">
-                <option value="Alta" ${item.prioridad === "Alta" ? "selected" : ""}>Alta</option>
-                <option value="Media-Alta" ${item.prioridad === "Media-Alta" ? "selected" : ""}>Media-Alta</option>
-                <option value="Media" ${item.prioridad === "Media" ? "selected" : ""}>Media</option>
-                <option value="Media-Baja" ${item.prioridad === "Media-Baja" ? "selected" : ""}>Media-Baja</option>
-                <option value="Baja" ${item.prioridad === "Baja" ? "selected" : ""}>Baja</option>
-              </select>
-            </td>
-            <td style="text-align:right"><button class="btn" style="padding:4px 8px" onclick="borrar(${i})">✕</button></td>
-          `;
+      <td><span style="display: flex; gap: 1rem; align-items: center; justify-content: center">
+        ${(i + 1).toString().padStart(2, "0")} <span class="drag-handle">⠿</span>
+      </span></td>
+      <td contenteditable="true" onblur="edit(${i},'nombre',this.innerText)">${item.nombre}</td>
+      <td style="font-weight:900">$<span contenteditable="true" onblur="edit(${i},'precio',this.innerText)">${item.precio}</span></td>
+      <td>${f(p * tasas.db)}</td>
+      <td>${f(p * tasas.dp)}</td>
+      <td>
+        <select class="etiqueta" onchange="edit(${i},'prioridad',this.value)">
+          <option value="Muy-Alta" ${item.prioridad === "Muy-Alta" ? "selected" : ""}>Muy-Alta</option>
+          <option value="Alta" ${item.prioridad === "Alta" ? "selected" : ""}>Alta</option>
+          <option value="Media-Alta" ${item.prioridad === "Media-Alta" ? "selected" : ""}>Media-Alta</option>
+          <option value="Media" ${item.prioridad === "Media" ? "selected" : ""}>Media</option>
+          <option value="Media-Baja" ${item.prioridad === "Media-Baja" ? "selected" : ""}>Media-Baja</option>
+          <option value="Baja" ${item.prioridad === "Baja" ? "selected" : ""}>Baja</option>
+        </select>
+      </td>
+      <td style="text-align:right"><button class="btn" style="padding:4px 8px" onclick="borrar(${i})">✕</button></td>
+    `;
           lista.appendChild(tr);
         });
 
@@ -507,13 +580,13 @@
         });
       }
 
-      function guardar(refresh = true) {
+      const guardar = (refresh = true) => {
         localStorage.setItem("sistema_inv_prod", JSON.stringify(inventario));
         localStorage.setItem("sistema_pap_prod", JSON.stringify(papelera));
         if (refresh) render();
-      }
+      };
 
-      window.agregar = () => {
+      const agregar = () => {
         const n = document.getElementById("in-nombre"),
           p = document.getElementById("in-precio"),
           pr = document.getElementById("in-prioridad");
@@ -529,18 +602,22 @@
         }
       };
 
-      window.edit = (i, c, v) => {
-        inventario[i][c] = v.trim();
-        guardar(c !== "nombre");
+      const edit = (i, c, v) => {
+        const index = parseInt(i);
+        if (inventario[index]) {
+          inventario[index][c] = v.trim();
+          guardar(c !== "nombre");
+        }
       };
 
-      window.borrar = (i) => {
-        papelera.push({ item: inventario[i], pos: i });
-        inventario.splice(i, 1);
+      const borrar = (i) => {
+        const index = parseInt(i);
+        papelera.push({ item: inventario[index], pos: index });
+        inventario.splice(index, 1);
         guardar();
       };
 
-      window.restaurar = (i, m) => {
+      const restaurar = (i, m) => {
         const p = papelera[i];
         if (m === "orig")
           inventario.splice(Math.min(p.pos, inventario.length), 0, p.item);
