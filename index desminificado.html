@@ -54,6 +54,10 @@
         justify-content: center;
       }
 
+      .moneda-fecha {
+        margin-top: 0.5rem;
+      }
+
       .contenedor {
         width: 100%;
         max-width: 1400px;
@@ -88,6 +92,17 @@
         text-transform: uppercase;
         display: block;
         margin-bottom: 5px;
+      }
+
+      input::-webkit-outer-spin-button,
+      input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+      }
+
+      input[type="number"] {
+        -moz-appearance: textfield;
+        appearance: textfield;
       }
 
       .tasa-monto {
@@ -314,53 +329,34 @@
           <span id="t-db" class="tasa-monto" style="color: var(--bcv)"
             >---</span
           >
-          <section
-            id="f-db"
-            style="margin-top: 0.5rem"
-            class="tasa-label"
-          ></section>
+          <section id="f-db" class="tasa-label moneda-fecha"></section>
         </section>
         <section class="tasa-card">
           <span class="tasa-label">Euro BCV</span>
           <span
             id="t-eb"
-            style="margin-top: 0.5rem"
-            class="tasa-monto"
+            class="tasa-monto moneda-fecha"
             style="color: var(--euro)"
             >---</span
           >
-          <section
-            id="f-eb"
-            style="margin-top: 0.5rem"
-            class="tasa-label"
-            class="tasa-label"
-          ></section>
+          <section id="f-eb" class="tasa-label moneda-fecha"></section>
         </section>
         <section class="tasa-card">
           <span class="tasa-label">Dólar Paralelo</span>
           <span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
             >---</span
           >
-          <section
-            id="f-dp"
-            style="margin-top: 0.5rem"
-            class="tasa-label"
-          ></section>
+          <section id="f-dp" class="tasa-label moneda-fecha"></section>
         </section>
         <section class="tasa-card">
           <span class="tasa-label">Euro Paralelo</span>
           <span
             id="t-ep"
-            style="margin-top: 0.5rem"
-            class="tasa-monto"
+            class="tasa-monto moneda-fecha"
             style="color: var(--naranja)"
             >---</span
           >
-          <section
-            id="f-ep"
-            class="tasa-label"
-            style="margin-top: 0.5rem"
-          ></section>
+          <section id="f-ep" class="tasa-label moneda-fecha"></section>
         </section>
       </section>
 
