@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
     <title>Inventario</title>
+    <meta name="description" content="Una Descripción" />
     <link rel="shortcut icon" href="Pergamino.png" type="image/png" />
     <style>
       @font-face {
@@ -92,6 +93,16 @@
         text-transform: uppercase;
         display: block;
         margin-bottom: 5px;
+      }
+
+      .total-row {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+      }
+
+      .total-card-v2 {
+        font-weight: bolder;
       }
 
       input::-webkit-outer-spin-button,
@@ -387,7 +398,7 @@
               <th>Producto</th>
               <th>USD ($)</th>
               <th>Bs. (BCV)</th>
-              <th>Bs. (Para)</th>
+              <th>Bs. (Paralelo)</th>
               <th>Prioridad</th>
               <th style="text-align: right">Acción</th>
             </tr>
@@ -465,7 +476,7 @@
         },
       });
 
-      async function fetchTasas() {
+      const fetchTasas = async () => {
         try {
           const [rd, re] = await Promise.all([
             fetch("https://ve.dolarapi.com/v1/dolares"),
@@ -473,8 +484,6 @@
           ]);
           const dd = await rd.json(),
             de = await re.json();
-
-          // Extraer datos y fechas
           const oficialD = dd.find((x) => x.fuente === "oficial");
           const paraD = dd.find((x) => x.fuente === "paralelo");
           const oficialE = de.find((x) => x.fuente === "oficial");
@@ -496,7 +505,7 @@
         } catch (e) {
           console.error("Error APIs");
         }
-      }
+      };
 
       function render() {
         // Renderizar montos
@@ -558,8 +567,8 @@
         document.getElementById("contenedor-totales").innerHTML = `
           <section class="total-card-v2"><section class="total-header">Total Dólar BCV</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--bcv)">Bs. ${f(bsOfi)}</span></section></section>
           <section class="total-card-v2"><section class="total-header">Total Dólar Paralelo</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--peligro)">Bs. ${f(bsPar)}</span></section></section>
-          <section class="total-card-v2"><section class="total-header">Total Euro BCV</section><section class="total-row"><span class="val-principal">€${f(bsOfi / tasas.eb)}</span><span style="color:var(--euro)">Bs. ${f(bsOfi)}</span></section></section>
-          <section class="total-card-v2"><section class="total-header">Total Euro Paralelo</section><section class="total-row"><span class="val-principal">€${f(bsPar / tasas.ep)}</span><span style="color:var(--naranja)">Bs. ${f(bsPar)}</span></section></section>
+          <section class="total-card-v2"><section class="total-header">Total Euro BCV</section><section class="total-row"><span class="val-principal">${f(bsOfi / tasas.eb)} €</span><span style="color:var(--euro)">Bs. ${f(bsOfi)}</span></section></section>
+          <section class="total-card-v2"><section class="total-header">Total Euro Paralelo</section><section class="total-row"><span class="val-principal">${f(bsPar / tasas.ep)} €</span><span style="color:var(--naranja)">Bs. ${f(bsPar)}</span></section></section>
         `;
       }
 
