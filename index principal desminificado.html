@@ -16,26 +16,25 @@
         </h1>
         <a
           class="enlace-contenido"
-          href="https://engerberthreyes.github.io/Listado"
-          >Ir a Inventario Sin Items →</a
-        >
-        <label class="switch">
-          <input type="checkbox" id="selectorTema" checked />
-          <span class="deslizador"></span>
-        </label>
+          href="https://engerberthreyes.github.io/Listado/index desminificado.html"
+          >Ir a Inventario Con Items →</a
+        ><label class="switch"
+          ><input type="checkbox" id="selectorTema" checked /><span
+            class="deslizador"
+          ></span
+        ></label>
       </header>
-
       <section class="panel-tasas">
         <section class="tasa-card">
-          <span class="tasa-label">Dólar BCV</span>
-          <span id="t-db" class="tasa-monto" style="color: var(--bcv)"
+          <span class="tasa-label">Dólar BCV</span
+          ><span id="t-db" class="tasa-monto" style="color: var(--bcv)"
             >---</span
           >
           <section id="f-db" class="tasa-label moneda-fecha"></section>
         </section>
         <section class="tasa-card">
-          <span class="tasa-label">Euro BCV</span>
-          <span
+          <span class="tasa-label">Euro BCV</span
+          ><span
             id="t-eb"
             class="tasa-monto moneda-fecha"
             style="color: var(--euro)"
@@ -44,15 +43,15 @@
           <section id="f-eb" class="tasa-label moneda-fecha"></section>
         </section>
         <section class="tasa-card">
-          <span class="tasa-label">Dólar Paralelo</span>
-          <span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
+          <span class="tasa-label">Dólar Paralelo</span
+          ><span id="t-dp" class="tasa-monto" style="color: var(--peligro)"
             >---</span
           >
           <section id="f-dp" class="tasa-label moneda-fecha"></section>
         </section>
         <section class="tasa-card">
-          <span class="tasa-label">Euro Paralelo</span>
-          <span
+          <span class="tasa-label">Euro Paralelo</span
+          ><span
             id="t-ep"
             class="tasa-monto moneda-fecha"
             style="color: var(--naranja)"
@@ -61,26 +60,25 @@
           <section id="f-ep" class="tasa-label moneda-fecha"></section>
         </section>
       </section>
-
       <section class="grupo-entrada">
-        <input type="text" id="in-nombre" placeholder="Concepto / Producto" />
         <input
+          type="text"
+          id="in-nombre"
+          placeholder="Concepto / Producto"
+        /><input
           type="number"
           id="in-precio"
           placeholder="Precio USD"
           step="0.01"
-        />
-        <select id="in-prioridad">
+        /><select id="in-prioridad">
           <option value="Muy Alta" selected>Muy Alta</option>
           <option value="Alta">Alta</option>
           <option value="Media-Alta">Media-Alta</option>
           <option value="Media">Media</option>
           <option value="Media-Baja">Media-Baja</option>
-          <option value="Baja">Baja</option>
-        </select>
-        <button class="btn btn-add" onclick="agregar()">Añadir Item</button>
+          <option value="Baja">Baja</option></select
+        ><button class="btn btn-add" onclick="agregar()">Añadir Item</button>
       </section>
-
       <section class="tarjeta-tabla">
         <table>
           <thead>
@@ -97,9 +95,7 @@
           <tbody id="lista-inventario"></tbody>
         </table>
       </section>
-
       <section class="totales-container" id="contenedor-totales"></section>
-
       <footer id="seccion-papelera" style="display: none; margin-top: 50px">
         <h3 style="font-size: 0.8rem; text-transform: uppercase">
           Papelera de Reciclaje
@@ -123,32 +119,15 @@
         ep: 0,
         ep_f: "",
       };
-
       const f = (n) =>
         (n || 0).toLocaleString("es-VE", {
           minimumFractionDigits: 2,
           maximumFractionDigits: 2,
         });
-
-      let inventario = JSON.parse(localStorage.getItem("sistema_inv_prod")) || [
-        {
-          nombre: "Cable Cat 6 o 6A [RJ45]",
-          precio: "20",
-          prioridad: "Media-Alta",
-        },
-        { nombre: "Mesa", precio: "150", prioridad: "Alta" },
-        { nombre: "Teclado y Mouse", precio: "90", prioridad: "Media" },
-        { nombre: "Teléfono", precio: "200", prioridad: "Alta" },
-        { nombre: "Saco Cruzado Negro", precio: "120", prioridad: "Media" },
-        { nombre: "Hoodie [Negro]", precio: "25", prioridad: "Baja" },
-        { nombre: "Guantes", precio: "15", prioridad: "Media-Baja" },
-        { nombre: "Vans Negras [No Botines]", precio: "30", prioridad: "Baja" },
-      ];
-
+      let inventario =
+        JSON.parse(localStorage.getItem("sistema_inv_prod")) || [];
       let papelera = JSON.parse(localStorage.getItem("sistema_pap_prod")) || [];
-
       const lista = document.getElementById("lista-inventario");
-
       Sortable.create(lista, {
         animation: 150,
         handle: ".drag-handle",
@@ -166,7 +145,6 @@
           guardar(true);
         },
       });
-
       const fetchTasas = async () => {
         try {
           const [rd, re] = await Promise.all([
@@ -179,27 +157,20 @@
           const paraD = dd.find((x) => x.fuente === "paralelo");
           const oficialE = de.find((x) => x.fuente === "oficial");
           const paraE = de.find((x) => x.fuente === "paralelo");
-
           tasas.db = oficialD.promedio;
           tasas.db_f = new Date(oficialD.fechaActualizacion).toLocaleString();
-
           tasas.dp = paraD.promedio;
           tasas.dp_f = new Date(paraD.fechaActualizacion).toLocaleString();
-
           tasas.eb = oficialE.promedio;
           tasas.eb_f = new Date(oficialE.fechaActualizacion).toLocaleString();
-
           tasas.ep = paraE.promedio;
           tasas.ep_f = new Date(paraE.fechaActualizacion).toLocaleString();
-
           render();
         } catch (e) {
           console.error("Error APIs");
         }
       };
-
-      function render() {
-        // Renderizar montos
+      const render = () => {
         document.getElementById("t-db").innerText =
           `Bs. ${tasas.db.toFixed(2)}`;
         document.getElementById("t-eb").innerText =
@@ -208,80 +179,42 @@
           `Bs. ${tasas.dp.toFixed(2)}`;
         document.getElementById("t-ep").innerText =
           `Bs. ${tasas.ep.toFixed(2)}`;
-
-        // Renderizar fechas
         document.getElementById("f-db").innerText = tasas.db_f;
         document.getElementById("f-eb").innerText = tasas.eb_f;
         document.getElementById("f-dp").innerText = tasas.dp_f;
         document.getElementById("f-ep").innerText = tasas.ep_f;
-
         lista.innerHTML = "";
         let sumaUSD = 0;
-
         inventario.forEach((item, i) => {
-          // 'i' empieza en 0
           const p = parseFloat(item.precio) || 0;
           sumaUSD += p;
           const tr = document.createElement("tr");
-
-          // IMPORTANTE: Guardamos el índice real (i)
-          tr.innerHTML = `
-      <td><span style="display: flex; gap: 1rem; align-items: center; justify-content: center">
-        ${(i + 1).toString().padStart(2, "0")} <span class="drag-handle">⠿</span>
-      </span></td>
-      <td contenteditable="true" onblur="edit(${i},'nombre',this.innerText)">${item.nombre}</td>
-      <td style="font-weight:900">$<span contenteditable="true" onblur="edit(${i},'precio',this.innerText)">${item.precio}</span></td>
-      <td>${f(p * tasas.db)}</td>
-      <td>${f(p * tasas.dp)}</td>
-      <td>
-        <select class="etiqueta" onchange="edit(${i},'prioridad',this.value)">
-          <option value="Muy Alta" ${item.prioridad === "Muy Alta" ? "selected" : ""}>Muy Alta</option>
-          <option value="Alta" ${item.prioridad === "Alta" ? "selected" : ""}>Alta</option>
-          <option value="Media-Alta" ${item.prioridad === "Media-Alta" ? "selected" : ""}>Media-Alta</option>
-          <option value="Media" ${item.prioridad === "Media" ? "selected" : ""}>Media</option>
-          <option value="Media-Baja" ${item.prioridad === "Media-Baja" ? "selected" : ""}>Media-Baja</option>
-          <option value="Baja" ${item.prioridad === "Baja" ? "selected" : ""}>Baja</option>
-        </select>
-      </td>
-      <td style="text-align:right"><button class="btn" style="padding:4px 8px" onclick="borrar(${i})">✕</button></td>
-    `;
+          tr.innerHTML = ` <td><span style="display: flex; gap: 1rem; align-items: center; justify-content: center"> ${(i + 1).toString().padStart(2, "0")} <span class="drag-handle">⠿</span></span></td><td contenteditable="true" onblur="edit(${i},'nombre',this.innerText)">${item.nombre}</td><td style="font-weight:900">$<span contenteditable="true" onblur="edit(${i},'precio',this.innerText)">${item.precio}</span></td><td>${f(p * tasas.db)}</td><td>${f(p * tasas.dp)}</td><td><select class="etiqueta" onchange="edit(${i},'prioridad',this.value)"><option value="Muy Alta" ${item.prioridad === "Muy Alta" ? "selected" : ""}>Muy Alta</option><option value="Alta" ${item.prioridad === "Alta" ? "selected" : ""}>Alta</option><option value="Media-Alta" ${item.prioridad === "Media-Alta" ? "selected" : ""}>Media-Alta</option><option value="Media" ${item.prioridad === "Media" ? "selected" : ""}>Media</option><option value="Media-Baja" ${item.prioridad === "Media-Baja" ? "selected" : ""}>Media-Baja</option><option value="Baja" ${item.prioridad === "Baja" ? "selected" : ""}>Baja</option></select></td><td style="text-align:right"><button class="btn" style="padding:4px 8px" onclick="borrar(${i})">✕</button></td> `;
           lista.appendChild(tr);
         });
-
         actualizarTotales(sumaUSD);
         renderPapelera();
-      }
-
-      function actualizarTotales(sumaUSD) {
+      };
+      const actualizarTotales = (sumaUSD) => {
         const bsOfi = sumaUSD * tasas.db;
         const bsPar = sumaUSD * tasas.dp;
-        document.getElementById("contenedor-totales").innerHTML = `
-          <section class="total-card-v2"><section class="total-header">Total Dólar BCV</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--bcv)">Bs. ${f(bsOfi)}</span></section></section>
-          <section class="total-card-v2"><section class="total-header">Total Dólar Paralelo</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--peligro)">Bs. ${f(bsPar)}</span></section></section>
-          <section class="total-card-v2"><section class="total-header">Total Euro BCV</section><section class="total-row"><span class="val-principal">${f(bsOfi / tasas.eb)} €</span><span style="color:var(--euro)">Bs. ${f(bsOfi)}</span></section></section>
-          <section class="total-card-v2"><section class="total-header">Total Euro Paralelo</section><section class="total-row"><span class="val-principal">${f(bsPar / tasas.ep)} €</span><span style="color:var(--naranja)">Bs. ${f(bsPar)}</span></section></section>
-        `;
-      }
-
-      function renderPapelera() {
+        document.getElementById("contenedor-totales").innerHTML =
+          `<section class="total-card-v2"><section class="total-header">Total Dólar BCV</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--bcv)">Bs. ${f(bsOfi)}</span></section></section><section class="total-card-v2"><section class="total-header">Total Dólar Paralelo</section><section class="total-row"><span class="val-principal">$${f(sumaUSD)}</span><span style="color:var(--peligro)">Bs. ${f(bsPar)}</span></section></section><section class="total-card-v2"><section class="total-header">Total Euro BCV</section><section class="total-row"><span class="val-principal">${f(bsOfi / tasas.eb)} €</span><span style="color:var(--euro)">Bs. ${f(bsOfi)}</span></section></section><section class="total-card-v2"><section class="total-header">Total Euro Paralelo</section><section class="total-row"><span class="val-principal">${f(bsPar / tasas.ep)} €</span><span style="color:var(--naranja)">Bs. ${f(bsPar)}</span></section></section> `;
+      };
+      const renderPapelera = () => {
         const pCuerpo = document.getElementById("lista-papelera");
         pCuerpo.innerHTML = "";
         document.getElementById("seccion-papelera").style.display =
           papelera.length ? "block" : "none";
         papelera.forEach((p, i) => {
-          pCuerpo.innerHTML += `<tr><td><s>${p.item.nombre}</s></td><td style="text-align:right">
-            <button class="btn" onclick="restaurar(${i},'orig')">Original</button>
-            <button class="btn" onclick="restaurar(${i},'fin')">Final</button>
-          </td></tr>`;
+          pCuerpo.innerHTML += `<tr><td><s>${p.item.nombre}</s></td><td style="text-align:right"><button class="btn" onclick="restaurar(${i},'orig')">Original</button><button class="btn" onclick="restaurar(${i},'fin')">Final</button></td></tr>`;
         });
-      }
-
+      };
       const guardar = (refresh = true) => {
         localStorage.setItem("sistema_inv_prod", JSON.stringify(inventario));
         localStorage.setItem("sistema_pap_prod", JSON.stringify(papelera));
         if (refresh) render();
       };
-
       const agregar = () => {
         const n = document.getElementById("in-nombre"),
           p = document.getElementById("in-precio"),
@@ -297,7 +230,6 @@
           guardar();
         }
       };
-
       const edit = (i, c, v) => {
         const index = parseInt(i);
         if (inventario[index]) {
@@ -305,14 +237,12 @@
           guardar(c !== "nombre");
         }
       };
-
       const borrar = (i) => {
         const index = parseInt(i);
         papelera.push({ item: inventario[index], pos: index });
         inventario.splice(index, 1);
         guardar();
       };
-
       const restaurar = (i, m) => {
         const p = papelera[i];
         if (m === "orig")
@@ -321,13 +251,11 @@
         papelera.splice(i, 1);
         guardar();
       };
-
       document.getElementById("selectorTema").onchange = (e) =>
         document.body.setAttribute(
           "data-tema",
           e.target.checked ? "oscuro" : "claro",
         );
-
       fetchTasas();
     </script>
   </body>
