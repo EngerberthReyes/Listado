@@ -198,8 +198,7 @@
         }
       };
 
-      function render() {
-        // Renderizar montos
+      const render = () => {
         document.getElementById("t-db").innerText =
           `Bs. ${tasas.db.toFixed(2)}`;
         document.getElementById("t-eb").innerText =
@@ -209,7 +208,6 @@
         document.getElementById("t-ep").innerText =
           `Bs. ${tasas.ep.toFixed(2)}`;
 
-        // Renderizar fechas
         document.getElementById("f-db").innerText = tasas.db_f;
         document.getElementById("f-eb").innerText = tasas.eb_f;
         document.getElementById("f-dp").innerText = tasas.dp_f;
@@ -219,12 +217,9 @@
         let sumaUSD = 0;
 
         inventario.forEach((item, i) => {
-          // 'i' empieza en 0
           const p = parseFloat(item.precio) || 0;
           sumaUSD += p;
           const tr = document.createElement("tr");
-
-          // IMPORTANTE: Guardamos el índice real (i)
           tr.innerHTML = `
       <td><span style="display: flex; gap: 1rem; align-items: center; justify-content: center">
         ${(i + 1).toString().padStart(2, "0")} <span class="drag-handle">⠿</span>
@@ -250,7 +245,7 @@
 
         actualizarTotales(sumaUSD);
         renderPapelera();
-      }
+      };
 
       function actualizarTotales(sumaUSD) {
         const bsOfi = sumaUSD * tasas.db;
